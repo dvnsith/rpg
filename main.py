@@ -1,9 +1,4 @@
 #!/usr/bin/python3
-"""Driving a simple game framework with
-   a dictionary object | Alta3 Research"""
-
-# Replace RPG starter project with this code when new instructions are live
-
 
 def showInstructions():
     """Show the game instructions when called"""
