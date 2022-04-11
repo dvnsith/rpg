@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+import time
+
 
 def showInstructions():
     """Show the game instructions when called"""
@@ -34,9 +36,14 @@ inventory = []
 rooms = {
 
     'Hall': {
+        'north': 'Bedroom',
         'south': 'Kitchen',
         'east': 'Dining Room',
         'west': 'Bathroom',
+    },
+    'Bedroom': {
+        'south': 'Hall',
+        'item': 'note'
     },
     'Kitchen': {
         'north': 'Hall',
@@ -49,7 +56,7 @@ rooms = {
         'item': 'wallet'
     },
     'Garage': {
-        'west': 'Kitchen',
+        'north': 'Kitchen',
     },
     'Dining Room': {
         'west': 'Hall',
@@ -63,7 +70,7 @@ rooms = {
     'Bathroom': {
         'east': 'Hall',
         'north': 'Closet',
-        'item': 'hair spray'
+        'item': 'hairspray'
     },
     'Closet': {
         'south': 'Bathroom',
@@ -75,6 +82,7 @@ rooms = {
 }
 
 
+isLocked = True
 # start the player in the Hall
 currentRoom = 'Hall'
 
@@ -121,27 +129,50 @@ while True:
             # tell them they can't get it
             print('Can\'t get ' + move[1] + '!')
 
-    if currentRoom == 'Tool shed':
-        print("Let's take a look at your inventory...")
-        if 'lighter' in inventory and 'hair spray' in inventory:
-            print("Looks like you can make a flamethrower")
-            inventory.remove("lighter")
-            inventory.remove("hair spray")
-            inventory.append("flamethrower")
+    # If a player has the neccessary items to make a weapon
+    if currentRoom == 'Tool shed' and isLocked:
+        print("Can't access tool shed.\nLooks like there's a lock")
+        if 'note' in inventory:
+            time.sleep(2)
+            print('Opening note...')
+            time.sleep(2)
+            lockCombination = input(
+                'When was python first released?\na. Febuary 21, 1995\nb. December 4. 1995\nc. Febuary 21, 1991\nd. January 23, 1995\n> ').lower()
+            if lockCombination == 'c':
+                print("Unlocked!")
+                time.sleep(2)
+                print("Let's take a look at your inventory...")
+                isLocked = False
+                if 'lighter' in inventory and 'hairspray' in inventory:
+                    time.sleep(2)
+                    print("Looks like you can make a flamethrower")
+                    inventory.remove("lighter")
+                    inventory.remove("hairspray")
+                    inventory.append("flamethrower")
+                else:
+                    time.sleep(2)
+                    print("There is nothing worth making.")
+                inventory.remove('note')
+            else:
+                time.sleep(2)
+                print("Incorrect code, come back and try again")
+                currentRoom = 'Backyard'
         else:
-            print("There is nothing worth making.")
+            currentRoom = 'Backyard'
 
-    # If a player enters a room with a monster
+    # If a player enters a room with a spider
     if 'item' in rooms[currentRoom] and 'spider' in rooms[currentRoom]['item']:
         print("You have encountered a HUGE spider!")
+        time.sleep(2)
         question = input("Would you like to do? \n>")
-        answerBank1 = ['go back', 'go north', 'return']
+        answerBank1 = ['go back', 'go north']
         answerBank2 = ['fight', 'continue']
         if question in answerBank1:
             currentRoom = 'Hall'
         elif question in answerBank2 and 'flamethrower' in inventory:
             del rooms[currentRoom]['item']
             inventory.remove('flamethrower')
+            time.sleep(2)
             print('You have used a flamethrower to kill the spider')
 
         else:
